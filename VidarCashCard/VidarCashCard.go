@@ -470,3 +470,12 @@ func (_Main *MainSession) Receive() (*types.Transaction, error) {
 func (_Main *MainTransactorSession) Receive() (*types.Transaction, error) {
 	return _Main.Contract.Receive(&_Main.TransactOpts)
 }
+// DeployApi deploys a new Ethereum contract, binding an instance of Api to it.
+func DeployApi(auth *bind.TransactOpts, backend bind.ContractBackend, ApiBin string) (common.Address, *types.Transaction, *Api, error) {
+	
+	address, tx, contract, err := bind.DeployContract(auth, *MainMetaData.ABI, common.FromHex(ApiBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &Api{ApiCaller: ApiCaller{contract: contract}, ApiTransactor: ApiTransactor{contract: contract}, ApiFilterer: ApiFilterer{contract: contract}}, nil
+}
